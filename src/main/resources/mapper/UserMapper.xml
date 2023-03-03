@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yawntee.mytrack.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.yawntee.mytrack.entity.User">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="CHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="banned" column="banned" jdbcType="TINYINT"/>
+        <collection property="perms" ofType="java.lang.String">
+            <result column="perm.type"/>
+        </collection>
+    </resultMap>
+
+    <select id="findOne" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+                 JOIN perm user.id = perm.user_id
+        WHERE user.id = #{username}
+    </select>
+
+    <select id="search" resultType="com.yawntee.mytrack.entity.User">
+        SELECT *
+        from user
+        <if test="keyword != null and keyword != ''">
+            WHERE username LIKE "%"#{keyword}"%" OR name LIKE "%"#{keyword}"%"
+        </if>
+    </select>
+
+</mapper>
