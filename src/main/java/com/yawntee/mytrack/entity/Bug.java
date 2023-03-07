@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yawntee.mytrack.enums.BugStatus;
 import lombok.Data;
 
 import java.io.Serial;
@@ -49,5 +50,5 @@ public class Bug implements Serializable {
      * bug状态(0-未解决,1-已解决待验证,2-已验证)
      */
     @TableField(value = "status")
-    private Integer status;
+    private BugStatus status;
 }

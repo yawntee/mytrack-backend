@@ -18,14 +18,6 @@ public class BugServiceImpl extends ServiceImpl<BugMapper, Bug>
         implements BugService {
 
     @Override
-    public boolean updateProgress(long id, int status) {
-        Bug bug = new Bug();
-        bug.setId(id);
-        bug.setStatus(status);
-        return updateById(bug);
-    }
-
-    @Override
     public List<Bug> findAllByAssignee(int userId) {
         return lambdaQuery().eq(Bug::getAssigneeId, userId).list();
     }

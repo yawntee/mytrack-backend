@@ -17,4 +17,6 @@ public interface UserService extends IService<User>, UserDetailsService {
 
     List<User> listUsers(String keyword);
 
+    boolean updateUser(int userid, String username, String password);
+
 }

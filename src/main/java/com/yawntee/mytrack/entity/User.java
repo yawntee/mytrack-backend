@@ -14,8 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 /**
  * @TableName user
@@ -47,17 +46,23 @@ public class User implements Serializable, UserDetails {
      */
     @TableField(value = "name")
     private String name;
+
+    /**
+     * 用户角色
+     */
+    @TableField(value = "role")
+    private String role;
+
     /**
      * 是否已封禁
      */
     @TableField(value = "banned")
     private Boolean banned;
-    private List<String> perms;
 
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return perms.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
     @Override

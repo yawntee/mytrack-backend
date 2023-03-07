@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.yawntee.mytrack.enums.VersionStatus;
 import lombok.Data;
 
 import java.io.Serial;
@@ -39,5 +40,5 @@ public class Version implements Serializable {
      * 版本状态(0-开发中,1-测试中,2-已完成)
      */
     @TableField(value = "status")
-    private Integer status;
+    private VersionStatus status;
 }

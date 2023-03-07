@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
         implements ProjectService {
 
+    @Override
+    public boolean grant(int projectId) {
+        return lambdaUpdate().set(Project::getEnable, true).eq(Project::getId, projectId).update();
+    }
 }
 
 

@@ -12,8 +12,6 @@ import java.util.List;
  */
 public interface BugService extends IService<Bug> {
 
-    boolean updateProgress(long id, int status);
-
     List<Bug> findAllByAssignee(int userId);
 
 }
