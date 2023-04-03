@@ -10,17 +10,7 @@
         <result property="password" column="password" jdbcType="CHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="banned" column="banned" jdbcType="TINYINT"/>
-        <collection property="perms" ofType="java.lang.String">
-            <result column="perm.type"/>
-        </collection>
     </resultMap>
-
-    <select id="findOne" resultMap="BaseResultMap">
-        SELECT *
-        FROM user
-                 JOIN perm user.id = perm.user_id
-        WHERE user.id = #{username}
-    </select>
 
     <select id="search" resultType="com.yawntee.mytrack.entity.User">
         SELECT *

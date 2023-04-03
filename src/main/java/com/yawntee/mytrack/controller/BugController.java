@@ -25,7 +25,7 @@ public class BugController implements Insertable<Bug>, Modifiable<Bug>, Listable
     @Getter
     private final BugService service;
 
-    @GetMapping
+    @GetMapping("/all")
     public Resp<List<Bug>> myBugs(@AuthenticationPrincipal User user) {
         return Resp.success(service.findAllByAssignee(user.getId()));
     }

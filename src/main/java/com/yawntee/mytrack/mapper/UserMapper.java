@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    User findOne(String username);
-
     List<User> search(String keyword);
 
 }

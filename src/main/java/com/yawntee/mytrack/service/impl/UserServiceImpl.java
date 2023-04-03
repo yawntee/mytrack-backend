@@ -21,12 +21,6 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
-
-    @Override
-    public User findUser(String username) {
-        return baseMapper.findOne(username);
-    }
-
     @Override
     public List<User> listUsers(String keyword) {
         return baseMapper.search(keyword);
@@ -47,7 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return findUser(username);
+        return lambdaQuery().eq(User::getUsername, username).one();
     }
 }
 

@@ -1,5 +1,6 @@
 package com.yawntee.mytrack.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -10,8 +11,10 @@ public class Resp<T> {
 
     private int code;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String msg;
 
     private Resp() {

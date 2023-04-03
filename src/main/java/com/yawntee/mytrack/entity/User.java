@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yawntee.mytrack.enums.Role;
 import com.yawntee.mytrack.handler.PasswordHandler;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,7 +52,7 @@ public class User implements Serializable, UserDetails {
      * 用户角色
      */
     @TableField(value = "role")
-    private String role;
+    private Role role;
 
     /**
      * 是否已封禁
@@ -62,25 +63,25 @@ public class User implements Serializable, UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role));
+        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     @JsonIgnore
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     @JsonIgnore
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

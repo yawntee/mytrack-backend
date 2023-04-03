@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface UserService extends IService<User>, UserDetailsService {
 
-    User findUser(String username);
-
     List<User> listUsers(String keyword);
 
     boolean updateUser(int userid, String username, String password);
