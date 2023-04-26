@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yawntee.mytrack.enums.VersionStatus;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 版本表
@@ -19,13 +21,14 @@ import java.io.Serializable;
 @Data
 public class Version implements Serializable {
     @Serial
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * 版本id
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private String id;
     /**
      * 所属项目id
      */
@@ -36,9 +39,7 @@ public class Version implements Serializable {
      */
     @TableField(value = "code")
     private String code;
-    /**
-     * 版本状态(0-开发中,1-测试中,2-已完成)
-     */
-    @TableField(value = "status")
-    private VersionStatus status;
+
+    @TableField(exist = false)
+    private List<Bug> bugs;
 }

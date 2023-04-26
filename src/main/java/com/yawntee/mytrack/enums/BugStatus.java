@@ -1,6 +1,7 @@
 package com.yawntee.mytrack.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public enum BugStatus {
 
     private final String name;
 
+    @JsonValue
     @EnumValue
     private final int code;
 }

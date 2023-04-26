@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 public enum Role {
     Admin("管理员", "ROLE_ADMIN"),
-    ProjectManager("项目管理员", "ROLE_PM"),
-    Developer("开发人员", "ROLE_DEV"),
-    Tester("测试人员", "ROLE_TEST");
+    PM("项目管理员", "ROLE_PM"),
+    Dev("开发人员", "ROLE_DEV"),
+    Test("测试人员", "ROLE_TEST");
 
     private final String name;
     @EnumValue

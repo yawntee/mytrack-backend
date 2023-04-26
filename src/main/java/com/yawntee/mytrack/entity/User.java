@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yawntee.mytrack.enums.Role;
 import com.yawntee.mytrack.handler.PasswordHandler;
 import lombok.Data;
@@ -24,13 +27,14 @@ import java.util.Collections;
 @Data
 public class User implements Serializable, UserDetails {
     @Serial
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * 用户id
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private String id;
     /**
      * 用户名
      */
@@ -39,7 +43,7 @@ public class User implements Serializable, UserDetails {
     /**
      * 密码(bcrypt)
      */
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @TableField(value = "password", typeHandler = PasswordHandler.class)
     private String password;
     /**
@@ -63,7 +67,7 @@ public class User implements Serializable, UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role.name()));
+        return Collections.singleton(new SimpleGrantedAuthority(role.getCode()));
     }
 
     @Override

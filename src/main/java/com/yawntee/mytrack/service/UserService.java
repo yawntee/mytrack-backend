@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yawntee.mytrack.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.List;
-
 /**
  * @author yawntee
  * @description 针对表【user】的数据库操作Service
@@ -13,8 +11,6 @@ import java.util.List;
  */
 public interface UserService extends IService<User>, UserDetailsService {
 
-    List<User> listUsers(String keyword);
-
-    boolean updateUser(int userid, String username, String password);
+    boolean updateUser(String userid, String username, String password);
 
 }

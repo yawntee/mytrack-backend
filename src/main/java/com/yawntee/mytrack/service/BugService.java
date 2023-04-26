@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface BugService extends IService<Bug> {
 
-    List<Bug> findAllByAssignee(int userId);
+    List<Bug> findAllByAssignee(String userId);
 
 }

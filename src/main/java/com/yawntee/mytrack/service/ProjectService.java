@@ -10,6 +10,7 @@ import com.yawntee.mytrack.entity.Project;
  */
 public interface ProjectService extends IService<Project> {
 
+
     boolean grant(int projectId);
 
 }

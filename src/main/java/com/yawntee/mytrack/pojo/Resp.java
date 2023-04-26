@@ -31,9 +31,13 @@ public class Resp<T> {
         return resp;
     }
 
-    public static Resp<?> fail(String msg) {
-        Resp<?> resp = new Resp<>();
-        resp.code = 1;
+    public static <T> Resp<T> fail(String msg) {
+        return fail(1, msg);
+    }
+
+    public static <T> Resp<T> fail(int code, String msg) {
+        Resp<T> resp = new Resp<>();
+        resp.code = code;
         resp.msg = msg;
         return resp;
     }

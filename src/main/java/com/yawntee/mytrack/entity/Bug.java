@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yawntee.mytrack.enums.BugStatus;
 import lombok.Data;
 
@@ -19,13 +21,14 @@ import java.io.Serializable;
 @Data
 public class Bug implements Serializable {
     @Serial
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * bug id
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private String id;
     /**
      * 所属版本id
      */
@@ -44,6 +47,7 @@ public class Bug implements Serializable {
     /**
      * 负责人
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(value = "assignee_id")
     private Integer assigneeId;
     /**

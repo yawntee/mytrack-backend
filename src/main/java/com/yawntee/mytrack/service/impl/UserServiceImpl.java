@@ -9,8 +9,7 @@ import com.yawntee.mytrack.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.util.StringUtils;
 
 /**
  * @author yawntee
@@ -22,17 +21,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
     @Override
-    public List<User> listUsers(String keyword) {
-        return baseMapper.search(keyword);
-    }
-
-    @Override
-    public boolean updateUser(int userid, String name, String password) {
+    public boolean updateUser(String userid, String name, String password) {
         LambdaUpdateChainWrapper<User> sql = lambdaUpdate();
-        if (name != null) {
+        if (StringUtils.hasLength(name)) {
             sql.set(User::getName, name);
         }
-        if (password != null) {
+        if (StringUtils.hasLength(password)) {
             sql.set(User::getPassword, SecurityConfiguration.encode(password));
         }
         sql.eq(User::getId, userid);

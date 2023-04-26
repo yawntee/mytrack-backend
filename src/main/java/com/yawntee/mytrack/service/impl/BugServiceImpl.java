@@ -18,9 +18,10 @@ public class BugServiceImpl extends ServiceImpl<BugMapper, Bug>
         implements BugService {
 
     @Override
-    public List<Bug> findAllByAssignee(int userId) {
+    public List<Bug> findAllByAssignee(String userId) {
         return lambdaQuery().eq(Bug::getAssigneeId, userId).list();
     }
+
 }
 
 

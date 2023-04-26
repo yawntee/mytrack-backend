@@ -26,7 +26,7 @@ dependencies {
     implementation("com.alibaba:druid:1.2.16")
     implementation("com.baomidou:mybatis-plus-boot-starter:3.5.3.1")
     compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
     runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

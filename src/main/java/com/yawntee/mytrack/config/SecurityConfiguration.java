@@ -48,6 +48,7 @@ public class SecurityConfiguration implements AuthenticationSuccessHandler, Auth
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
+        http.authorizeHttpRequests().anyRequest().authenticated();
         http.formLogin()
                 .successHandler(this)
                 .failureHandler(this)
@@ -70,7 +71,7 @@ public class SecurityConfiguration implements AuthenticationSuccessHandler, Auth
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-        log.info("商户[" + user.getUsername() + "]登陆成功！");
+        log.info("用户[" + user.getUsername() + "]登陆成功！");
         response.setContentType("application/json;charset=utf-8");
         Resp<Map<String, String>> resp = Resp.success(Map.of("name", user.getName(), "role", user.getRole().name()));
         PrintWriter out = response.getWriter();
@@ -82,7 +83,6 @@ public class SecurityConfiguration implements AuthenticationSuccessHandler, Auth
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         PrintWriter out = response.getWriter();
         json.writeValue(out, Resp.fail(exception.getMessage()));
         out.flush();

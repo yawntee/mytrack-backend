@@ -2,7 +2,6 @@ package com.yawntee.mytrack.controller;
 
 import com.yawntee.mytrack.component.Deletable;
 import com.yawntee.mytrack.component.Insertable;
-import com.yawntee.mytrack.component.Listable;
 import com.yawntee.mytrack.component.Modifiable;
 import com.yawntee.mytrack.entity.Bug;
 import com.yawntee.mytrack.entity.User;
@@ -20,10 +19,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/bug")
 @AllArgsConstructor
-public class BugController implements Insertable<Bug>, Modifiable<Bug>, Listable<Bug>, Deletable<Bug> {
+public class BugController implements Insertable<Bug>, Modifiable<Bug>, Deletable<Bug> {
 
     @Getter
     private final BugService service;
+
+    @GetMapping
+    private Resp<List<Bug>> find(Integer versionId) {
+        var query = service.lambdaQuery();
+        if (versionId != null) {
+            query.eq(Bug::getVersionId, versionId);
+        }
+        return Resp.success(query.list());
+    }
 
     @GetMapping("/all")
     public Resp<List<Bug>> myBugs(@AuthenticationPrincipal User user) {
