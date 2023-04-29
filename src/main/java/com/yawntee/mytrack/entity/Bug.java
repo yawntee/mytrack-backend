@@ -1,9 +1,6 @@
 package com.yawntee.mytrack.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yawntee.mytrack.enums.BugStatus;
@@ -21,14 +18,14 @@ import java.io.Serializable;
 @Data
 public class Bug implements Serializable {
     @Serial
-    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * bug id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
-    private String id;
+    private Long id;
     /**
      * 所属版本id
      */
@@ -48,7 +45,7 @@ public class Bug implements Serializable {
      * 负责人
      */
     @JsonSerialize(using = ToStringSerializer.class)
-    @TableField(value = "assignee_id")
+    @TableField(value = "assignee_id", updateStrategy = FieldStrategy.IGNORED)
     private Integer assigneeId;
     /**
      * bug状态(0-未解决,1-已解决待验证,2-已验证)

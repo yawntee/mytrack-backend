@@ -21,14 +21,14 @@ import java.util.List;
 @Data
 public class Version implements Serializable {
     @Serial
-    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * 版本id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
-    private String id;
+    private Integer id;
     /**
      * 所属项目id
      */

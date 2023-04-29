@@ -21,7 +21,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
     @Override
-    public boolean updateUser(String userid, String name, String password) {
+    public boolean updateUser(Integer userid, String name, String password) {
         LambdaUpdateChainWrapper<User> sql = lambdaUpdate();
         if (StringUtils.hasLength(name)) {
             sql.set(User::getName, name);

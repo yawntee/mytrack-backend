@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public enum BugStatus {
     unsolved("未解决", 0),
-    solved("已解决", 1),
+    solvedNotVerify("已解决待验证", 1),
     verified("已验证", 2);
 
 

@@ -1,20 +1,23 @@
 package com.yawntee.mytrack.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.yawntee.mytrack.enums.ProjectStatus;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.Data;
+
 /**
  * 项目表
  * @TableName project
  */
-@TableName(value = "project")
+@TableName(value ="project")
 @Data
 public class Project implements Serializable {
     /**
@@ -22,7 +25,7 @@ public class Project implements Serializable {
      */
     @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
-    private String id;
+    private Integer id;
 
     /**
      * 项目名
@@ -36,22 +39,30 @@ public class Project implements Serializable {
     @TableField(value = "content")
     private String content;
 
-    @Serial
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
     /**
-     *
+     * 
      */
-    @TableField(value = "enable", insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
+    @TableField(value = "enable")
     private Boolean enable;
-
 
     /**
      * 项目状态(0-开发中,1-测试中,2-已完成)
      */
-    @TableField(value = "status", insertStrategy = FieldStrategy.NEVER)
-    private ProjectStatus status;
+    @TableField(value = "status")
+    private Integer status;
+
+    /**
+     * 创建者
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @TableField(value = "creator_id")
+    private Integer creatorId;
+
 
     @TableField(exist = false)
     private List<Version> versions;
+
+    @Serial
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 }

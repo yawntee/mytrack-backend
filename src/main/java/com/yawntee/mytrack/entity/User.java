@@ -1,9 +1,6 @@
 package com.yawntee.mytrack.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -27,14 +24,14 @@ import java.util.Collections;
 @Data
 public class User implements Serializable, UserDetails {
     @Serial
-    @JsonSerialize(using = ToStringSerializer.class)
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
      * 用户id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.AUTO)
-    private String id;
+    private Integer id;
     /**
      * 用户名
      */
@@ -61,7 +58,7 @@ public class User implements Serializable, UserDetails {
     /**
      * 是否已封禁
      */
-    @TableField(value = "banned")
+    @TableField(value = "banned", insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     private Boolean banned;
 
     @Override
