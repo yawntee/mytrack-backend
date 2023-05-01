@@ -1,6 +1,5 @@
 package com.yawntee.mytrack.controller;
 
-import com.yawntee.mytrack.component.Deletable;
 import com.yawntee.mytrack.component.Modifiable;
 import com.yawntee.mytrack.entity.Bug;
 import com.yawntee.mytrack.entity.Project;
@@ -11,9 +10,14 @@ import com.yawntee.mytrack.pojo.Resp;
 import com.yawntee.mytrack.service.BugService;
 import com.yawntee.mytrack.service.ProjectService;
 import com.yawntee.mytrack.service.VersionService;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.ibatis.annotations.Insert;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
-public class ProjectController implements Modifiable<Project>, Deletable<Project> {
+@Validated
+public class ProjectController implements Modifiable<Project> {
 
     @Getter
     private final ProjectService service;
@@ -30,8 +35,17 @@ public class ProjectController implements Modifiable<Project>, Deletable<Project
 
     private final BugService bugService;
 
+    /**
+     * 新增项目
+     *
+     * @param user 当前用户
+     * @param data 项目内容
+     * @return
+     */
+    @Secured({Role.ROLE_ADMIN, Role.ROLE_PM})
     @PostMapping
-    Resp<?> insert(@AuthenticationPrincipal User user, @RequestBody Project data) {
+    Resp<?> insert(@AuthenticationPrincipal User user, @RequestBody @Validated(Insert.class) Project data) {
+        data.setEnable(user.getRole().equals(Role.Admin));
         data.setCreatorId(user.getId());
         if (getService().save(data)) {
             return Resp.success();
@@ -40,27 +54,63 @@ public class ProjectController implements Modifiable<Project>, Deletable<Project
         }
     }
 
+    /**
+     * 单项目审批通过
+     *
+     * @param id 项目ID
+     * @return
+     */
+    @Secured(Role.ROLE_ADMIN)
     @PutMapping("/permit/{id}")
-    public Resp<?> permit(@PathVariable Integer id) {
+    public Resp<?> permit(@PathVariable @Min(1) Integer id) {
         return service.permit(id) ? Resp.success() : Resp.fail("审核失败");
     }
 
+    /**
+     * 获取主页项目列表
+     *
+     * @param user 当前用户
+     * @return
+     */
     @GetMapping
     public Resp<List<Project>> getList(@AuthenticationPrincipal User user) {
-        var query = service.lambdaQuery().orderByDesc(Project::getId);
+        var query = service.lambdaQuery();
         if (!user.getRole().equals(Role.Admin)) {
-            query.eq(Project::getEnable, true).or().eq(Project::getCreatorId, user.getId());
+            query.eq(Project::getEnable, true) //只显示批准的项目
+                    .or()
+                    .eq(Project::getCreatorId, user.getId()); //项目经理可查看自己创建的未审批项目
         }
+        query.orderByAsc(Project::getEnable)
+                .orderByDesc(Project::getId);
         return Resp.success(query.list());
     }
 
+    /**
+     * 获取单项目信息、版本、BUG记录
+     *
+     * @param id 项目ID
+     * @return
+     */
     @GetMapping("/{id}")
-    public Resp<Project> getProject(@PathVariable Integer id) {
+    public Resp<Project> getProject(@PathVariable @Min(1) Integer id) {
+        Project project = service.getById(id);
+        if (project == null) return Resp.fail("项目不存在");
+        if (!project.getEnable()) return Resp.failBack("项目暂未通过审批");
         List<Version> versions = versionService.lambdaQuery().eq(Version::getProjectId, id).orderByDesc(Version::getId).list();
         versions.forEach(version -> version.setBugs(bugService.lambdaQuery().eq(Bug::getVersionId, version.getId()).orderByAsc(Bug::getStatus).list()));
-        Project project = service.getById(id);
-        if (project == null) return Resp.fail("仓库不存在");
         project.setVersions(versions);
         return Resp.success(project);
+    }
+
+    @DeleteMapping("/{id}")
+    public Resp<?> delete(@AuthenticationPrincipal User user, @PathVariable @Min(1) Integer id) {
+        Project project = service.getById(id);
+        if (project == null) return Resp.fail("项目不存在");
+        if (project.getEnable() && !user.getRole().equals(Role.Admin)) throw new AccessDeniedException("无权删除项目");
+        if (getService().removeById(id)) {
+            return Resp.success();
+        } else {
+            return Resp.fail("删除失败");
+        }
     }
 }

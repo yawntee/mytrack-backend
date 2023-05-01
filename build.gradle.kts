@@ -25,6 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.alibaba:druid:1.2.16")
     implementation("com.baomidou:mybatis-plus-boot-starter:3.5.3.1")
+    implementation("com.google.guava:guava:31.1-jre")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools:3.0.4")
     runtimeOnly("com.mysql:mysql-connector-j")

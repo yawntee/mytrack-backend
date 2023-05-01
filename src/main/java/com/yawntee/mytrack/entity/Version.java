@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.yawntee.mytrack.annotation.Id;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Data;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,17 +31,22 @@ public class Version implements Serializable {
     /**
      * 版本id
      */
-    @JsonSerialize(using = ToStringSerializer.class)
+    @Null(groups = {Insert.class})
+    @NotNull(groups = {Update.class})
+    @Id(groups = {Insert.class, Update.class})
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     /**
      * 所属项目id
      */
+    @Min(1)
+    @NotNull(groups = Insert.class)
     @TableField(value = "project_id")
     private Integer projectId;
     /**
      * 版本号
      */
+    @NotBlank(groups = Insert.class)
     @TableField(value = "code")
     private String code;
 

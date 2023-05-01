@@ -15,4 +15,9 @@ public enum Role {
     private final String name;
     @EnumValue
     private final String code;
+
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_PM = "ROLE_PM";
+    public static final String ROLE_DEV = "ROLE_DEV";
+    public static final String ROLE_TEST = "ROLE_TEST";
 }

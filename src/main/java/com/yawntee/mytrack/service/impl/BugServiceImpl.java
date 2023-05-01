@@ -19,7 +19,7 @@ public class BugServiceImpl extends ServiceImpl<BugMapper, Bug>
 
     @Override
     public List<Bug> findAllByAssignee(Integer userId) {
-        return lambdaQuery().eq(Bug::getAssigneeId, userId).list();
+        return lambdaQuery().lt(Bug::getStatus, 2).eq(Bug::getAssigneeId, userId).orderByAsc(Bug::getStatus).list();
     }
 
 }

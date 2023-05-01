@@ -5,6 +5,7 @@ import com.yawntee.mytrack.entity.Project;
 import com.yawntee.mytrack.mapper.ProjectMapper;
 import com.yawntee.mytrack.service.ProjectService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author yawntee
@@ -16,8 +17,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project>
         implements ProjectService {
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean permit(int projectId) {
-        return lambdaUpdate().set(Project::getEnable, true).eq(Project::getId, projectId).update();
+        Project project = baseMapper.selectById(projectId);
+        project.setEnable(true);
+        project.setId(null);
+        if (baseMapper.insert(project) > 0) {
+            baseMapper.deleteById(projectId);
+            return true;
+        }
+        return false;
     }
 }
 

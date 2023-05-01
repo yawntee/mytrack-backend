@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 /**
  * @author yawntee
  * @description 针对表【user】的数据库操作Service实现
@@ -35,7 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return lambdaQuery().eq(User::getUsername, username).one();
+        return Optional.ofNullable(lambdaQuery().eq(User::getUsername, username).one()).orElseThrow(() -> new UsernameNotFoundException("用户名或密码错误"));
     }
 }
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface Deletable<T> extends ServiceProvider<T> {
 
     @DeleteMapping("/{id}")
-    default Resp<?> delete(@PathVariable int id) {
+    default Resp<?> delete(@PathVariable Integer id) {
         if (getService().removeById(id)) {
             return Resp.success();
         } else {

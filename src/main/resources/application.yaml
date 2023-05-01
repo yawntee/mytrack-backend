@@ -31,3 +31,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null
     time-zone: GMT+8
+
+jakarta:
+  validation:
+    constraints:
+      Min:
+        message: "最小值为${min}"

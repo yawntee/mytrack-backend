@@ -17,6 +17,9 @@ public class Resp<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String msg;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer back;
+
     private Resp() {
     }
 
@@ -35,10 +38,20 @@ public class Resp<T> {
         return fail(1, msg);
     }
 
+    public static <T> Resp<T> failBack(String msg) {
+        return failBack(1, msg);
+    }
+
     public static <T> Resp<T> fail(int code, String msg) {
         Resp<T> resp = new Resp<>();
         resp.code = code;
         resp.msg = msg;
+        return resp;
+    }
+
+    public static <T> Resp<T> failBack(int code, String msg) {
+        Resp<T> resp = fail(code, msg);
+        resp.back = 1;
         return resp;
     }
 
