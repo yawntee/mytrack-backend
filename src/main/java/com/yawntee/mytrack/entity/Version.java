@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yawntee.mytrack.annotation.Id;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,9 +32,10 @@ public class Version implements Serializable {
     /**
      * 版本id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Min(1)
     @Null(groups = {Insert.class})
     @NotNull(groups = {Update.class})
-    @Id(groups = {Insert.class, Update.class})
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     /**

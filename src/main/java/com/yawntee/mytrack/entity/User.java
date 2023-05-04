@@ -3,9 +3,11 @@ package com.yawntee.mytrack.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yawntee.mytrack.annotation.Id;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yawntee.mytrack.enums.Role;
 import com.yawntee.mytrack.handler.PasswordHandler;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -33,9 +35,10 @@ public class User implements Serializable, UserDetails {
     /**
      * 用户id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Min(1)
     @Null(groups = {Insert.class})
     @NotNull(groups = {Update.class})
-    @Id(groups = {Insert.class, Update.class})
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     /**

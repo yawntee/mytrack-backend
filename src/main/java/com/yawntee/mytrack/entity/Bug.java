@@ -3,7 +3,6 @@ package com.yawntee.mytrack.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.yawntee.mytrack.annotation.Id;
 import com.yawntee.mytrack.enums.BugStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,9 +29,10 @@ public class Bug implements Serializable {
     /**
      * bug id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
+    @Min(1)
     @Null(groups = {Insert.class})
     @NotNull(groups = {Update.class})
-    @Id(groups = {Insert.class, Update.class})
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**
