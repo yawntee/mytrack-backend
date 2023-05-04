@@ -1,10 +1,14 @@
 package com.yawntee.mytrack.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import com.yawntee.mytrack.component.Modifiable;
 import com.yawntee.mytrack.entity.Bug;
 import com.yawntee.mytrack.entity.Project;
 import com.yawntee.mytrack.entity.User;
 import com.yawntee.mytrack.entity.Version;
+import com.yawntee.mytrack.enums.BugStatus;
 import com.yawntee.mytrack.enums.Role;
 import com.yawntee.mytrack.pojo.Resp;
 import com.yawntee.mytrack.service.BugService;
@@ -20,6 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -73,7 +78,7 @@ public class ProjectController implements Modifiable<Project> {
      * @return
      */
     @GetMapping
-    public Resp<List<Project>> getList(@AuthenticationPrincipal User user) {
+    public Resp<List<Project>> getList(@AuthenticationPrincipal User user) throws JsonProcessingException {
         var query = service.lambdaQuery();
         if (!user.getRole().equals(Role.Admin)) {
             query.eq(Project::getEnable, true) //只显示批准的项目
@@ -82,7 +87,18 @@ public class ProjectController implements Modifiable<Project> {
         }
         query.orderByAsc(Project::getEnable)
                 .orderByDesc(Project::getId);
-        return Resp.success(query.list());
+        List<Project> rs = query.list();
+        for (Project r : rs) {
+            List<Integer> versionIds = versionService.lambdaQuery().select(Version::getId).eq(Version::getProjectId, r.getId()).list().stream().map(Version::getId).toList();
+            if (versionIds.isEmpty()) {
+                r.setBugStatus(Collections.emptyList());
+                continue;
+            }
+            List<BugStatus> bugStatus = bugService.lambdaQuery().select(Bug::getStatus).in(Bug::getVersionId, versionIds).list().stream().map(Bug::getStatus).toList();
+            Multiset<BugStatus> counter = HashMultiset.create(bugStatus);
+            r.setBugStatus(counter.entrySet());
+        }
+        return Resp.success(rs);
     }
 
     /**
