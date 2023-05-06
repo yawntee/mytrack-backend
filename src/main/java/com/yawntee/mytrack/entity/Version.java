@@ -1,9 +1,6 @@
 package com.yawntee.mytrack.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.Min;
@@ -51,6 +48,12 @@ public class Version implements Serializable {
     @NotBlank(groups = Insert.class)
     @TableField(value = "code")
     private String code;
+
+    /**
+     * 是否已发布
+     */
+    @TableField(value = "released", insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
+    private Boolean released;
 
     @TableField(exist = false)
     private List<Bug> bugs;

@@ -49,7 +49,7 @@ public class Project implements Serializable {
     private String content;
 
     /**
-     *
+     * 是否已通过审批
      */
     @TableField(value = "enable", updateStrategy = FieldStrategy.NEVER)
     private Boolean enable;

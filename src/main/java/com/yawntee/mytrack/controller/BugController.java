@@ -1,12 +1,18 @@
 package com.yawntee.mytrack.controller;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.yawntee.mytrack.component.Deletable;
 import com.yawntee.mytrack.entity.Bug;
+import com.yawntee.mytrack.entity.Project;
 import com.yawntee.mytrack.entity.User;
+import com.yawntee.mytrack.entity.Version;
 import com.yawntee.mytrack.enums.BugStatus;
 import com.yawntee.mytrack.enums.Role;
 import com.yawntee.mytrack.pojo.Resp;
 import com.yawntee.mytrack.service.BugService;
+import com.yawntee.mytrack.service.ProjectService;
+import com.yawntee.mytrack.service.VersionService;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("/bug")
@@ -30,6 +35,9 @@ public class BugController implements Deletable<Bug> {
     @Getter
     private final BugService service;
 
+    private final VersionService versionService;
+
+    private final ProjectService projectService;
 
     @Secured({Role.ROLE_ADMIN, Role.ROLE_TEST})
     @PostMapping
@@ -92,8 +100,31 @@ public class BugController implements Deletable<Bug> {
      */
     @Secured(Role.ROLE_DEV)
     @GetMapping("/todo")
-    public Resp<List<Bug>> todo(@AuthenticationPrincipal User user) {
-        return Resp.success(service.findAllByAssignee(user.getId()));
+    public Resp<Map<String, List<Bug>>> todo(@AuthenticationPrincipal User user) {
+        //BUG集合
+        List<Bug> bugs = service.findAllByAssignee(user.getId());
+        ListMultimap<Integer, Bug> bugMultimap = ArrayListMultimap.create();
+        bugs.forEach(bug -> bugMultimap.put(bug.getVersionId(), bug));
+        //版本集合
+        List<Version> versions = versionService.lambdaQuery().in(Version::getId, bugMultimap.keys()).list();
+        versions.forEach(version -> version.setBugs(bugMultimap.get(version.getId())));
+        ListMultimap<Integer, Version> versionMultimap = ArrayListMultimap.create();
+        versions.forEach(version -> versionMultimap.put(version.getProjectId(), version));
+        //项目集合
+        List<Project> projects = projectService.lambdaQuery().in(Project::getId, versionMultimap.keys()).list();
+        Map<String, List<Bug>> result = new HashMap<>();
+        projects.forEach(
+                project -> result.put(
+                        project.getName(),
+                        versionMultimap.get(project.getId())
+                                .stream()
+                                .map(Version::getBugs)
+                                .flatMap(Collection::stream)
+                                .sorted(Comparator.comparingInt(a -> a.getStatus().getCode()))
+                                .toList()
+                )
+        );
+        return Resp.success(result);
     }
 
     /**

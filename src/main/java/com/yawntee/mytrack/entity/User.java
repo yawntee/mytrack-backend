@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Null;
 import lombok.Data;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +52,7 @@ public class User implements Serializable, UserDetails {
      * 密码(bcrypt)
      */
     @NotBlank(groups = Insert.class)
+    @Length(min = 5, max = 20)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @TableField(value = "password", typeHandler = PasswordHandler.class)
     private String password;
