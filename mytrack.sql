@@ -22,8 +22,7 @@ create table project
         primary key,
     name       varchar(255)         not null comment '项目名',
     content    text                 not null comment '项目内容',
-    enable     tinyint(1) default 0 not null comment '是否可用',
-    status     tinyint    default 0 not null comment '项目状态(0-开发中,1-测试中,2-已完成)',
+    enable     tinyint(1) default 0 not null comment '是否已通过审批',
     creator_id int                  not null comment '创建者'
 )
     comment '项目表';
@@ -45,8 +44,9 @@ create table version
 (
     id         int auto_increment comment '版本id'
         primary key,
-    project_id int          not null comment '所属项目id',
-    code       varchar(255) not null comment '版本号'
+    project_id int                  not null comment '所属项目id',
+    code       varchar(255)         not null comment '版本号',
+    released   tinyint(1) default 0 not null comment '是否已发布'
 )
     comment '版本表';
 
