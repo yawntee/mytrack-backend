@@ -44,6 +44,9 @@ public class BugController implements Deletable<Bug> {
     public Resp<?> insert(@AuthenticationPrincipal User user, @RequestBody @Validated(Insert.class) Bug bug) {
         //测试人员不能设置状态
         if (!user.getRole().equals(Role.Admin)) bug.setStatus(null);
+        Version version = versionService.getById(bug.getVersionId());
+        if (version == null) return Resp.fail("版本不存在");
+        if (version.getReleased()) return Resp.fail("版本已发布归档");
         if (getService().save(bug)) {
             return Resp.success();
         } else {
@@ -54,6 +57,9 @@ public class BugController implements Deletable<Bug> {
     @Secured({Role.ROLE_ADMIN, Role.ROLE_TEST})
     @Override
     public Resp<?> delete(Integer id) {
+        val bug = service.getById(id);
+        if (bug == null) return Resp.fail("BUG记录不存在");
+        if (checkRelease(bug)) return Resp.fail("版本已发布归档");
         return Deletable.super.delete(id);
     }
 
@@ -85,6 +91,7 @@ public class BugController implements Deletable<Bug> {
         if (user.getRole() != Role.Admin) {
             data.setStatus(null);
         }
+        if (checkRelease(data)) return Resp.fail("版本已发布归档");
         if (getService().updateById(data)) {
             return Resp.success();
         } else {
@@ -139,6 +146,8 @@ public class BugController implements Deletable<Bug> {
     @PutMapping("/done/{id}")
     public Resp<?> done(@AuthenticationPrincipal User user, @PathVariable @Min(1) Integer id) {
         val bug = service.getById(id);
+        if (bug == null) return Resp.fail("BUG记录不存在");
+        if (checkRelease(bug)) return Resp.fail("版本已发布归档");
         int status;
         switch (user.getRole()) {
             case Dev -> {
@@ -170,6 +179,7 @@ public class BugController implements Deletable<Bug> {
     public Resp<?> ret(@RequestBody @Validated(Update.class) Bug newBug) {
         val bug = service.getById(newBug.getId());
         if (bug == null) return Resp.fail("BUG记录不存在");
+        if (checkRelease(bug)) return Resp.fail("版本已发布归档");
         if (!bug.getStatus().equals(BugStatus.solvedNotVerify)) return Resp.fail("无效的状态");
         boolean result = service.lambdaUpdate()
                 .set(Bug::getSubject, newBug.getSubject())
@@ -181,4 +191,8 @@ public class BugController implements Deletable<Bug> {
         return result ? Resp.success() : Resp.fail("操作失败");
     }
 
+    private boolean checkRelease(Bug bug) {
+        Version version = versionService.getById(bug.getVersionId());
+        return version.getReleased();
+    }
 }
