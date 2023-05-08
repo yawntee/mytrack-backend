@@ -1,6 +1,5 @@
 package com.yawntee.mytrack.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.yawntee.mytrack.component.Modifiable;
@@ -18,6 +17,7 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -78,7 +78,7 @@ public class ProjectController implements Modifiable<Project> {
      * @return
      */
     @GetMapping
-    public Resp<List<Project>> getList(@AuthenticationPrincipal User user) throws JsonProcessingException {
+    public Resp<List<Project>> getList(@AuthenticationPrincipal User user) {
         var query = service.lambdaQuery();
         if (!user.getRole().equals(Role.Admin)) {
             query.eq(Project::getEnable, true) //只显示批准的项目
@@ -116,6 +116,15 @@ public class ProjectController implements Modifiable<Project> {
         versions.forEach(version -> version.setBugs(bugService.lambdaQuery().eq(Bug::getVersionId, version.getId()).orderByAsc(Bug::getStatus).list()));
         project.setVersions(versions);
         return Resp.success(project);
+    }
+
+    @Secured({Role.ROLE_ADMIN, Role.ROLE_PM})
+    @Override
+    public Resp<?> modify(@RequestBody @Validated(Update.class) Project data) {
+        Project project = service.getById(data.getId());
+        if (project == null) return Resp.fail("项目不存在");
+        if (!project.getEnable()) return Resp.failBack("项目暂未通过审批");
+        return Modifiable.super.modify(data);
     }
 
     @DeleteMapping("/{id}")

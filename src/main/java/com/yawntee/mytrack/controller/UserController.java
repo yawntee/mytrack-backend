@@ -129,7 +129,7 @@ public class UserController implements Insertable<User>, Modifiable<User> {
      */
     @Secured(Role.ROLE_ADMIN)
     @Override
-    public Resp<?> modify(User data) {
+    public Resp<?> modify(@RequestBody @Validated(Update.class) User data) {
         if (hasUsername(data)) return Resp.fail("用户名已存在");
         return Modifiable.super.modify(data);
     }
