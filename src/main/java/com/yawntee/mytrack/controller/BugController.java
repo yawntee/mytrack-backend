@@ -103,6 +103,7 @@ public class BugController implements Deletable<Bug> {
     public Resp<Map<String, List<Bug>>> todo(@AuthenticationPrincipal User user) {
         //BUG集合
         List<Bug> bugs = service.findAllByAssignee(user.getId());
+        if (bugs.isEmpty()) return Resp.success(Collections.emptyMap());
         ListMultimap<Integer, Bug> bugMultimap = ArrayListMultimap.create();
         bugs.forEach(bug -> bugMultimap.put(bug.getVersionId(), bug));
         //版本集合
