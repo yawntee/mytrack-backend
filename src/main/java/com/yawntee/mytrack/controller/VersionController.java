@@ -52,11 +52,17 @@ public class VersionController implements Insertable<Version>, Modifiable<Versio
 
     @Override
     public Resp<?> modify(Version data) {
+        Version version = service.getById(data.getId());
+        if (version == null) return Resp.fail("版本不存在");
+        if (version.getReleased()) return Resp.fail("版本已发布归档");
         return Modifiable.super.modify(data);
     }
 
     @Override
     public Resp<?> delete(Integer id) {
+        Version version = service.getById(id);
+        if (version == null) return Resp.fail("版本不存在");
+        if (version.getReleased()) return Resp.fail("版本已发布归档");
         return Deletable.super.delete(id);
     }
 
